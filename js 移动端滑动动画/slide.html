@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,user-scalable=no"> 
+	<title>Document</title>
+	<style type="text/css">
+		body {
+			padding: 0;
+			margin: 0;
+		}
+
+		ul,li {
+			padding: 0;
+			margin: 0;
+			list-style: none;
+		}
+
+		.wrap {
+			position: relative;
+			width: 320px;
+			height: 200px;
+			margin: 0 auto;
+			overflow: hidden;
+		}
+
+		.wrap ul {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			left: 0;
+			top: 0;
+			
+		}
+
+		.wrap li {
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 200px;
+		}
+
+		.wrap img {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrap" id="wrap">
+		<ul id="list">
+			<li class="active"><img src="img1.jpg"></li>
+			<li><img src="img2.jpg"></li>
+			<li><img src="img3.jpg"></li>
+			<li><img src="img4.jpg"></li>
+			<li><img src="img5.jpg"></li>
+		</ul>
+	</div>
+	<script type="text/javascript">
+		window.onload =function(){
+			var warpObj = document.getElementById("wrap");
+			var listObj = document.getElementById("list").getElementsByTagName("li");
+			var width   = warpObj.clientWidth;
+			var warpX = warpObj.offsetLeft;
+			var len = listObj.length;
+			var x,endx,index,nindex,pindex,movex;
+			var startTime,endTime;
+
+			//初始化图片位置
+			for (var i=0;i<len;i++){
+				listObj[i].style.webkitTransform = 'translate3d('+ width*i + 'px,0,0)'
+			}
+
+			//对li绑定事件
+			warpObj.addEventListener("touchstart",function(event){
+				startTime = new Date()*1;  //求出touchstart时间戳
+				x = event.touches[0].pageX-warpX;  //求出touchsatrt x坐标
+
+				//获取当前li的索引
+                for (var i=0;i<len;i++){
+                    var str = listObj[i].style.webkitTransform;
+                    listObj[i] && (listObj[i].style.webkitTransition = '-webkit-transform 0s ease-out');
+                    if (str.indexOf("(0px, 0px, 0px)") > 0){  
+                    	index = i;
+                    }  
+                }
+                console.log(index)
+                pindex = index?index-1:null;      //上一张图片的索引
+                nindex = index>=4?null:index+1;   //下一张图片的索引
+			},false)
+
+
+			warpObj.addEventListener("touchmove",function(event){
+				event.preventDefault();
+
+				movex = event.touches[0].pageX-warpX - x;     //获取手指移动的距离
+
+				//根据距离来滑动图片
+                listObj[index].style.webkitTransform = 'translate3d('+ movex + 'px,0,0)';     
+                (nindex !==null) && (listObj[nindex].style.webkitTransform = 'translate3d('+ (movex+width) + 'px,0,0)');
+                (pindex !==null) && (listObj[pindex].style.webkitTransform = 'translate3d('+ (movex-width) + 'px,0,0)');
+            },false)
+
+
+			warpObj.addEventListener("touchend",function(event){
+				endTime = new Date()*1;
+				var timeDiff = endTime - startTime;      // 计算手指按下到离开的时间
+
+				//为滑动的图片添加动画   
+                listObj[index].style.webkitTransition = 'transform 0.4s ease-in-out';               
+                (nindex !==null) && (listObj[nindex].style.webkitTransition= 'transform 0.4s ease-in-out');
+                (pindex !==null) && (listObj[pindex].style.webkitTransition = 'transform 0.4s ease-in-out');
+
+                // 手指离开屏幕时 定位图片的位置
+				if (movex>0){
+					if (movex >=width/2 || timeDiff < 800){
+						(pindex !==null)?listObj[index].style.webkitTransform = 'translate3d('+ width + 'px,0,0)':listObj[index].style.webkitTransform = 'translate3d('+ 0 + 'px,0,0)';
+						(nindex !==null) && (listObj[nindex].style.webkitTransform = 'translate3d('+ (width*2) + 'px,0,0)');
+						(pindex !==null) && (listObj[pindex].style.webkitTransform = 'translate3d('+ 0 + 'px,0,0)');
+					}else {
+						listObj[index].style.webkitTransform = 'translate3d('+ 0 + 'px,0,0)';
+						(nindex !==null) && (listObj[nindex].style.webkitTransform = 'translate3d('+ (width) + 'px,0,0)');
+						(pindex !==null) && (listObj[pindex].style.webkitTransform = 'translate3d('+ (-width) + 'px,0,0)');						
+					}
+				}else {
+					if (Math.abs(movex) >=width/2 || timeDiff < 800){
+						(nindex !==null)?listObj[index].style.webkitTransform = 'translate3d('+ (-width) + 'px,0,0)':listObj[index].style.webkitTransform = 'translate3d('+ 0 + 'px,0,0)';
+						(nindex !==null) && (listObj[nindex].style.webkitTransform = 'translate3d('+ 0 + 'px,0,0)');
+						(pindex !==null) && (listObj[pindex].style.webkitTransform = 'translate3d('+ (-width*2) + 'px,0,0)');
+					}else {
+						listObj[index].style.webkitTransform = 'translate3d('+ 0 + 'px,0,0)';
+						(nindex !==null) && (listObj[nindex].style.webkitTransform = 'translate3d('+ (width) + 'px,0,0)');
+						(pindex !==null) && (listObj[pindex].style.webkitTransform = 'translate3d('+ (-width) + 'px,0,0)');						
+					}					
+				}
+			},false)
+		};
+	</script>
+</body>
+</html>
