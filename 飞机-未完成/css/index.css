@@ -1,0 +1,62 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+ul,li,ol {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+.wrap {
+    position: relative;
+    overflow: hidden;
+    top: 60px;
+    width: 450px;
+    height: 500px;
+    margin: 0 auto;
+    border: 1px solid #D8D8D8;
+    background: url(../img/background.png) no-repeat;
+    background-size: 100%;
+}
+
+.plane {
+    position: absolute;
+    cursor: pointer;
+    bottom: 5%;
+    right: 8%;
+}
+
+.plane > img {
+    width: 90px;
+    height: 110px;
+}
+
+.plane-enemy {
+    position: absolute;
+    top: 0;
+}
+
+.list {
+    position: relative;
+}
+
+.list li {
+    position: absolute;
+    top: 0;
+    -moz-transition: all 5s linear;
+    -webkit-transition: all 5s linear;
+    -o-transition: all .5s linear;
+    transition: all 6s linear;
+}
+
+.plane-enemy img {
+    -webkit-transform: rotateZ(180deg);
+    -moz-transform: rotateZ(180deg);
+    -o-transform: rotateZ(180deg);
+    -ms-transform: rotateZ(180deg);
+    transform: rotateZ(180deg);
+}
